@@ -1,7 +1,7 @@
 # AutoQuad Flight Control Firmware
 
 This is a fork/continuation of [Bill Nesbitt's AutoQuad firmware](https://github.com/bn999/autoquad) for multicopter flight control.
-
+* ¹úÄÚautoquad QQÈº559415874
 * [AutoQuad Project Site](http://autoquad.org/)
 * [AutoQuad Documetation](http://autoquad.org/wiki/wiki/)
 * [AutoQuad Forums](http://forum.autoquad.org/)

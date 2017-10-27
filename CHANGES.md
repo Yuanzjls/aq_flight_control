@@ -9,6 +9,11 @@ This file describes changes in the firmware, typically since the previous minor 
 	~ : enchancement/non-breaking change
 	! : important change, possible danger, change of default behavior, etc.
 
+##### 2017-8-27 jiezhi320
+ *¿ª·¢»·¾³ÒÆÖ²µ½MDK
+ *rtos Ìæ»»Îªrt-thread
+ *Ìí¼ÓÁË×Ô¶¯Æğ·É¡¢×Ô¶¯½µÂä
+ *ÔÚ¶¨¸ßÄ£Ê½¿ÉÒÔÖ±½ÓÆğ·É
 
 ##### 7.1.1898 - Nov. 15, 2016 - CURRENT MASTER BRANCH
 
@@ -83,7 +88,7 @@ This file describes changes in the firmware, typically since the previous minor 
 
 `+` Add signaling events for waypoint reached, WP recorded, and WPs cleared.  
 
-#### 7.1.1858 -€“ Apr. 16, 2015
+#### 7.1.1858 -€?Apr. 16, 2015
 
 **!!! Due to new control configuration scheme, the Flight Mode and Home Set/RTH switch channels will be reset to defaults. !!!**  
 Also note that these changes are NOT directly compatible with AQ QGC 1.6.3 and lower. It will still mostly work, but any changes to the new parameters in this version will need to be done directly in the Onboard Configuration window.  An updated QGC with a proper setup GUI for the new features is underway.
@@ -95,8 +100,8 @@ Also note that these changes are NOT directly compatible with AQ QGC 1.6.3 and l
 `~` Do not set home position or return to home w/out 3D GPS fix.  AQ reports when home position is actually set via plain text and special Mavlink messages.  
 `+` Add text message notices when switching to mission or to manual modes.  
 `~` Voltage reported via Mavlink is now lightly (low pass) filtered instead of sending raw ADC data. Not much practical difference since QGC smooths the voltage readings anyway.  
-`+` Add ability to report current (power) sensor data via Mavlink (at this point using a current sensor directly with AQ still requires custom code or the un-released â€œPDBâ€ expander.)  
-`+` Add more concise system status reporting in Mavlink â€œcustom modeâ€ variable, and for other upcoming telemetry options.  
+`+` Add ability to report current (power) sensor data via Mavlink (at this point using a current sensor directly with AQ still requires custom code or the un-released â€œPDBâ€?expander.)  
+`+` Add more concise system status reporting in Mavlink â€œcustom modeâ€?variable, and for other upcoming telemetry options.  
 `*` Fix Mavlink nav_controller_output message values for Heading, Course, and Distance to waypoint (were off by factor of 100).  
 `~` Change version number format reported via text message.  This may also break some features of QGC 1.6.3 and lower.  
 
@@ -105,8 +110,8 @@ Also note that these changes are NOT directly compatible with AQ QGC 1.6.3 and l
 `~` Change how battery voltage compensation is handled on M4 with onboard brushed motors and Quatos.  
 `*` Fix precision of parameters saved to onboard SD card and to DIMU EEPROM (issue originally introduced in r204/b1352).  
 
-##### 7.1.1852 -€“ EXPR â€“ Feb. 17, 2015
+##### 7.1.1852 -€?EXPR â€?Feb. 17, 2015
 
-`~` New version numbering format now excludes the SVN revision (â€œrâ€) number.  New format is  Major.Minor.Build â€“ Label.  
+`~` New version numbering format now excludes the SVN revision (â€œrâ€? number.  New format is  Major.Minor.Build â€?Label.  
 `+` Add ESC32 CAN telemetry over MAVLink.  Use with AQ QGC 1.6.3 and up.  
 `*` Prevent possible firmware crash when performing multiple consecutive calibration/parameter saving tasks via Mavlink.  
