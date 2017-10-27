@@ -42,7 +42,7 @@
 #include "supervisor.h"
 #include "util.h"
 
-//#include <CoOS.h>
+#include <cpuusage.h>
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -206,7 +206,7 @@ void mavlinkDo(void) {
     if (streamAll || (mavlinkData.streams[MAV_DATA_STREAM_EXTENDED_STATUS].enable && mavlinkData.streams[MAV_DATA_STREAM_EXTENDED_STATUS].next < micros)) {
 	currDraw = (supervisorData.aOutLPF == SUPERVISOR_INVALID_AMPSOUT_VALUE) ? -1 : supervisorData.aOutLPF * 100;
 
-	mavlink_msg_sys_status_send(MAVLINK_COMM_0, 0, 0, 0, (uint16_t)(1000L - LROUNDF(supervisorData.idlePercent * 10.0f)), supervisorData.vInLPF * 1000, currDraw,
+	mavlink_msg_sys_status_send(MAVLINK_COMM_0, 0, 0, 0, (uint16_t)(cpu_usage_get() * 10.0f), supervisorData.vInLPF * 1000, currDraw,
 		supervisorData.battRemainingPrct, 0, mavlinkData.packetDrops, 0, 0, 0, 0);
 	mavlink_msg_radio_status_send(MAVLINK_COMM_0, RADIO_QUALITY, 0, 0, 0, 0, RADIO_ERROR_COUNT, 0);
 
@@ -564,7 +564,7 @@ void mavlinkRecvTaskCode(commRcvrStruct_t *r) {
 		case MAVLINK_MSG_ID_SET_MODE:
 		    if (mavlink_msg_set_mode_get_target_system(&msg) == mavlink_system.sysid) {
 			mavlinkData.sys_mode = mavlink_msg_set_mode_get_base_mode(&msg);
-			mavlink_msg_sys_status_send(MAVLINK_COMM_0, 0, 0, 0, 1000-/*mavlinkData.idlePercent*/supervisorData.idlePercent, analogData.vIn * 1000, -1, (analogData.vIn - 9.8f) / 12.6f * 1000, 0, mavlinkData.packetDrops, 0, 0, 0, 0);
+			mavlink_msg_sys_status_send(MAVLINK_COMM_0, 0, 0, 0, 1000-cpu_usage_get()/*mavlinkData.idlePercent*/, analogData.vIn * 1000, -1, (analogData.vIn - 9.8f) / 12.6f * 1000, 0, mavlinkData.packetDrops, 0, 0, 0, 0);
 		    }
 		    break;
 

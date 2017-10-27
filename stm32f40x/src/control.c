@@ -583,7 +583,7 @@ void controlTaskCode(void *unused) {
                                 controlData.anglesDesired[axis] = utilFilter3(controlData.angleFilter[axis], controlData.anglesDesired[axis]);
                                 // seek 0 diff between desired and actual angles
                                 outputs[axis] = pidUpdate(controlData.anglePID[axis], controlData.anglesDesired[axis], *anglesActual[axis]);
-                             
+
                             }
 
                             if (axis == RPY_Y || controlData.controllerType == CONTROLLER_TYPE_PID_C)

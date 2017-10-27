@@ -1,6 +1,6 @@
 #include <rtthread.h>
 #include <rthw.h>
-
+#include <cpuusage.h>
 
 
 
@@ -57,27 +57,24 @@ static void cpu_usage_idle_hook(void)
         cpu_usage_minor = 0;
     }
 }
-#ifndef news
-void cpu_usage_get(rt_uint8_t *major, rt_uint8_t *minor)
-{
-    RT_ASSERT(major != RT_NULL);
-    RT_ASSERT(minor != RT_NULL);
 
-    *major = cpu_usage_major;
-    *minor = cpu_usage_minor;
+//void cpu_usage_get(rt_uint8_t *major, rt_uint8_t *minor)
+//{
+//    RT_ASSERT(major != RT_NULL);
+//    RT_ASSERT(minor != RT_NULL);
+
+//    *major = cpu_usage_major;
+//    *minor = cpu_usage_minor;
+//}
+
+rt_int16_t cpu_usage_get(void)
+{
+	   rt_int16_t result = cpu_usage_major;//((int16_t)cpu_usage_major*100+cpu_usage_minor)/10;
+     return result;
 }
 
-rt_uint8_t cpu_usage_get_major(void)
-{
-     return cpu_usage_major;
-}
-#endif
 void cpu_usage_init(void)
 {
-#ifdef news	
-    *SCB_DEMCR = *SCB_DEMCR | 0x01000000;
-    *DWT_CONTROL = *DWT_CONTROL | 1; // enable the counter
-#endif	
     /* set idle thread hook */
     rt_thread_idle_sethook(cpu_usage_idle_hook);
 }

@@ -145,7 +145,7 @@
 /******************************************************************************/
 
 /************************* PLL Parameters *************************************/
-#define USE_EXT_HSE
+//#define USE_EXT_HSE
 /* PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL_M) * PLL_N */
 #ifdef USE_EXT_HSE
   #define PLL_M      25//(HSE_VALUE / 1000000)

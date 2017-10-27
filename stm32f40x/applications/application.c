@@ -64,7 +64,7 @@
 #ifdef HAS_TELEM_SMARTPORT
 #include "telem_sPort.h"
 #endif
-
+#include <cpuusage.h>
 
 volatile unsigned long counter;
 volatile unsigned long minCycles = 0xFFFFFFFF;
