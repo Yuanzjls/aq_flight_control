@@ -10,10 +10,12 @@ This file describes changes in the firmware, typically since the previous minor 
 	! : important change, possible danger, change of default behavior, etc.
 
 ##### 2017-8-27 jiezhi320
- *开发环境移植到MDK
- *rtos 替换为rt-thread
- *添加了自动起飞、自动降落
- *在定高模式可以直接起飞
+
+`!` The development environment was changed to MDK(MDK5.24)
+`!` rtos was changed to rt-thread（2.1.0）
+`+` Add auto take off;
+`+` Add auto land;
+`+` Can take off at alt_hold mode;
 
 ##### 7.1.1898 - Nov. 15, 2016 - CURRENT MASTER BRANCH
 
