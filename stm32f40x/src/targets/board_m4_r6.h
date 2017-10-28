@@ -34,12 +34,15 @@
 //#define _VSPD_SLOW  
 //#define _HSPD_SLOW
 
-#define _DISARM_ON_LAND  
-    #define _DISARM_ON_LAND_CNT   400//2.5ms*400=1.25s
 
-//#define _DISABLE_MANUAL
+
+#define _DISABLE_MANUAL//可定高起飞
    #define _ONLAND_THRO   530
 
+#ifdef  _DISABLE_MANUAL
+    #define _DISARM_ON_LAND  
+        #define _DISARM_ON_LAND_CNT   400//2.5ms*400=1.25s
+#endif
 
 //#ifndef HAS_QUATOS
 //#define  USE_MWC_PID
