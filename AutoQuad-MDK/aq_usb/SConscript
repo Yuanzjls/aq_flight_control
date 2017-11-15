@@ -1,0 +1,31 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'aq_usb')
+
+# add the general drivers.
+src = Split("""
+usb.c
+usb_bsp.c
+usb_core.c
+usbd_desc.c
+usbd_storage_msd.c
+usbd_cdc_msc_core.c
+usbd_msc_bot.c
+usbd_msc_data.c
+usbd_msc_scsi.c
+usbd_req.c
+usbd_core.c
+usbd_ioreq.c
+usb_dcd_int.c
+usb_dcd.c
+""")
+
+
+CPPPATH = [cwd]
+
+group = DefineGroup('AQ_usb', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
+
