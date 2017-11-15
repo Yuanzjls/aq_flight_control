@@ -1003,13 +1003,13 @@ void navUkfInit(void) {
     navUkfData.v0a[2] = -1.0f;
 
     // calculate mag vector based on inclination
-    mag[0] = arm_cos_f32(p[IMU_MAG_INCL] * DEG_TO_RAD);//cosf 
+    mag[0] = arm_cos_f32(/*p[IMU_MAG_INCL]*/0.0f * DEG_TO_RAD);//cosf 
     mag[1] = 0.0f;
-    mag[2] = -arm_sin_f32(p[IMU_MAG_INCL] * DEG_TO_RAD);//sinf 
+    mag[2] = -arm_sin_f32(/*p[IMU_MAG_INCL]*/0.0f * DEG_TO_RAD);//sinf 
 
     // rotate local mag vector to align with true north
-    navUkfData.v0m[0] = mag[0] * arm_cos_f32(p[IMU_MAG_DECL] * DEG_TO_RAD) - mag[1] * sinf(p[IMU_MAG_DECL]  * DEG_TO_RAD);// cosf
-    navUkfData.v0m[1] = mag[1] * arm_cos_f32(p[IMU_MAG_DECL] * DEG_TO_RAD) + mag[0] * sinf(p[IMU_MAG_DECL]  * DEG_TO_RAD);// cosf
+    navUkfData.v0m[0] = mag[0] * arm_cos_f32(/*p[IMU_MAG_DECL]*/0.0f * DEG_TO_RAD) - mag[1] * sinf(p[IMU_MAG_DECL]  * DEG_TO_RAD);// cosf
+    navUkfData.v0m[1] = mag[1] * arm_cos_f32(/*p[IMU_MAG_DECL] */0.0f* DEG_TO_RAD) + mag[0] * sinf(p[IMU_MAG_DECL]  * DEG_TO_RAD);// cosf
     navUkfData.v0m[2] = mag[2];
 
     navUkfData.kf = srcdkfInit(SIM_S, SIM_M, SIM_V, SIM_N, navUkfTimeUpdate);

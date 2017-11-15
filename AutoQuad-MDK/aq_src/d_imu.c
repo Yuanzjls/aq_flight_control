@@ -215,7 +215,7 @@ static void dIMUReadCalib(void) {
     buf = eepromOpenRead();
 
     if (buf == 0) {
-	AQ_NOTICE("DIMU: cannot read EEPROM parameters!\n");
+	    AQ_NOTICE("DIMU: cannot read EEPROM parameters!\n");
     }
     else {
 	while ((size = eepromRead(DIMU_EEPROM_BLOCK_SIZE)) != 0)

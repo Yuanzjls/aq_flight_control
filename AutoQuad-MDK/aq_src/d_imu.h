@@ -37,6 +37,8 @@
 #define DIMU_INNER_PERIOD   2500    // [us] (400 Hz)
 #define DIMU_OUTER_DT	    ((float)DIMU_OUTER_PERIOD / 1e6f)
 #define DIMU_INNER_DT	    ((float)DIMU_INNER_PERIOD / 1e6f)
+#define DIMU_OUTER_HZ	    (1e6f/((float)DIMU_OUTER_PERIOD))
+#define DIMU_INNER_HZ	    (1e6f/((float)DIMU_INNER_PERIOD))	
 #define DIMU_TEMP_TAU	    5.0f
 
 #define DIMU_TIM	    TIM12

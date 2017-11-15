@@ -750,6 +750,11 @@
               <FileType>1</FileType>
               <FilePath>aq_src\util.c</FilePath>
             </File>
+            <File>
+              <FileName>LowPassFilterFloat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\aq_src\LowPassFilterFloat.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1174,16 +1179,6 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>rt-thread-2.1.0\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>CTRL_Lib_filter</GroupName>
-          <Files>
-            <File>
-              <FileName>LowPassFilterFloat.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\ctrl_libraries\Filter\LowPassFilterFloat.c</FilePath>
             </File>
           </Files>
         </Group>

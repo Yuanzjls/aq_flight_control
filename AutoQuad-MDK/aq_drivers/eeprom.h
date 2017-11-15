@@ -37,7 +37,7 @@
 #define EEPROM_READ		    0b0011
 #define EEPROM_WRITE		    0b0010
 
-#define EEPROM_VERSION		    0x00010010
+#define EEPROM_VERSION		    0x00010011
 #define EEPROM_SIGNATURE	    0xdeafbeef
 
 typedef struct {

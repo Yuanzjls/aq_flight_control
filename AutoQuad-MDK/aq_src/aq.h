@@ -75,6 +75,7 @@
 
 #ifndef M_PI
 #define M_PI			3.14159265f
+#define M_2PI	        (2.0*M_PI)
 #define M_PI_2			(M_PI / 2.0f)
 #endif
 

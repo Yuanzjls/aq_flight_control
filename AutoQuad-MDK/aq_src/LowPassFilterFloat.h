@@ -44,19 +44,16 @@
 
 #pragma once
 
-#include <AP_Math/AP_Math.h>
-
-
 typedef struct{
 
     float _output;
-    float alpha = 1.0f;  
+    float alpha;  
     float _cutoff_freq;
 
 }LowPassFilterFloat;
 
 
-LowPassFilterFloat_init(LowPassFilterFloat *lpf, float sample_freq, float cutoff_freq);
+void LowPassFilterFloat_init(LowPassFilterFloat *lpf, float sample_freq, float cutoff_freq);
 
 float LowPassFilterFloat_apply(LowPassFilterFloat *lpf, float sample);
 

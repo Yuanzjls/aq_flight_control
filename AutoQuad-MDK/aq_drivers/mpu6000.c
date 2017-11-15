@@ -19,6 +19,7 @@
 #include "config.h"
 #if defined(HAS_DIGITAL_IMU) && defined(DIMU_HAVE_MPU6000)
 #include "imu.h"
+
 #include "mpu6000.h"
 #include "aq_timer.h"
 #include "util.h"
@@ -27,6 +28,7 @@
 #ifndef __CC_ARM
 #include <intrinsics.h>
 #endif
+
 
 mpu6000Struct_t mpu6000Data;
 
@@ -42,15 +44,28 @@ void mpu6600InitialBias(void) {
     tempSum = 0.0f;
 
     for (i = 0; i < 50; i++) {
-	while (lastUpdate == mpu6000Data.lastUpdate)
-	    delay(1);
-	lastUpdate = mpu6000Data.lastUpdate;
+        while (lastUpdate == mpu6000Data.lastUpdate)
+            delay(1);
+        lastUpdate = mpu6000Data.lastUpdate;
 
-	tempSum += mpu6000Data.rawTemp;
+        tempSum += mpu6000Data.rawTemp;
     }
 
     mpu6000Data.temp = tempSum / 50.0f;
     utilFilterReset(&mpu6000Data.tempFilter, mpu6000Data.temp);
+
+    for (i=0; i<3; i++)
+    {
+        //使用p[IMU_MAG_INCL]做为gyro滤波系数 默认40hz
+        LowPassFilterFloat_init(&mpu6000Data.lpf_dRateGyo[i], DIMU_INNER_HZ, p[IMU_MAG_INCL]);
+    }
+
+    for (i=0; i<3; i++)
+    {
+        //使用p[IMU_MAG_DECL]做为acc滤波系数 默认20hz
+        LowPassFilterFloat_init(&mpu6000Data.lpf_acc[i],  DIMU_OUTER_HZ, p[IMU_MAG_DECL]);
+        LowPassFilterFloat_init(&mpu6000Data.lpf_gyro[i], DIMU_OUTER_HZ, p[IMU_MAG_DECL]);
+    }
 }
 
 static void mpu6000CalibAcc(float *in, volatile float *out) {
@@ -82,7 +97,7 @@ static void mpu6000ScaleGyo(int32_t *in, float *out, float divisor) {
     float scale;
 
     scale = 1.0f / ((1<<16) / (MPU6000_GYO_SCALE * 2.0f)) * divisor * DEG_TO_RAD;
-    
+
     out[0] = mpu6000Data.gyoSign[0] * DIMU_ORIENT_GYO_X * scale;
     out[1] = mpu6000Data.gyoSign[1] * DIMU_ORIENT_GYO_Y * scale;
     out[2] = mpu6000Data.gyoSign[2] * DIMU_ORIENT_GYO_Z * scale;
@@ -128,6 +143,7 @@ void mpu6000DrateDecode(void) {
     int32_t gyo[3];
     float divisor;
     int s, i;
+    float tmp[3];
 
     if (mpu6000Data.enabled) {
         for (i = 0; i < 3; i++)
@@ -149,7 +165,7 @@ void mpu6000DrateDecode(void) {
                 gyo[0] += (int16_t)__rev16(*(uint16_t *)&d[j+9]);
                 gyo[1] += (int16_t)__rev16(*(uint16_t *)&d[j+11]);
                 gyo[2] += (int16_t)__rev16(*(uint16_t *)&d[j+13]);
-                
+
             }
 
             if (--s < 0)
@@ -159,7 +175,12 @@ void mpu6000DrateDecode(void) {
         divisor = 1.0f / divisor;
 
         mpu6000ScaleGyo(gyo, mpu6000Data.dRateRawGyo, divisor);
-        mpu6000CalibGyo(mpu6000Data.dRateRawGyo, mpu6000Data.dRateGyo);
+
+        for (i=0; i<3; i++)
+        {
+            tmp[i] = LowPassFilterFloat_apply(&mpu6000Data.lpf_dRateGyo[i], mpu6000Data.dRateRawGyo[i]);
+        }
+        mpu6000CalibGyo(/*mpu6000Data.dRateRawGyo*/tmp, mpu6000Data.dRateGyo);
     }
 }
 
@@ -168,49 +189,59 @@ void mpu6000Decode(void) {
     int32_t acc[3], temp, gyo[3];
     float divisor;
     int i;
+    float tmp[3];
 
     if (mpu6000Data.enabled) {
-	for (i = 0; i < 3; i++) {
-	    acc[i] = 0;
-	    gyo[i] = 0;
-	}
-	temp = 0;
+        for (i = 0; i < 3; i++) {
+            acc[i] = 0;
+            gyo[i] = 0;
+        }
+        temp = 0;
 
-	divisor = (float)MPU6000_SLOTS;
-	for (i = 0; i < MPU6000_SLOTS; i++) {
-	    int j = i*MPU6000_SLOT_SIZE;
+        divisor = (float)MPU6000_SLOTS;
+        for (i = 0; i < MPU6000_SLOTS; i++) {
+            int j = i*MPU6000_SLOT_SIZE;
 
-	    // check if we are in the middle of a transaction for this slot
-	    if (i == mpu6000Data.slot && mpu6000Data.spiFlag == 0)	{
-		divisor -= 1.0f;
-	    }
-	    else {
-		acc[0] += (int16_t)__rev16(*(uint16_t *)&d[j+1]);
-		acc[1] += (int16_t)__rev16(*(uint16_t *)&d[j+3]);
-		acc[2] += (int16_t)__rev16(*(uint16_t *)&d[j+5]);
+            // check if we are in the middle of a transaction for this slot
+            if (i == mpu6000Data.slot && mpu6000Data.spiFlag == 0)	{
+                divisor -= 1.0f;
+            }
+            else {
+                acc[0] += (int16_t)__rev16(*(uint16_t *)&d[j+1]);
+                acc[1] += (int16_t)__rev16(*(uint16_t *)&d[j+3]);
+                acc[2] += (int16_t)__rev16(*(uint16_t *)&d[j+5]);
 
-		temp += (int16_t)__rev16(*(uint16_t *)&d[j+7]);
+                temp += (int16_t)__rev16(*(uint16_t *)&d[j+7]);
 
-		gyo[0] += (int16_t)__rev16(*(uint16_t *)&d[j+9]);
-		gyo[1] += (int16_t)__rev16(*(uint16_t *)&d[j+11]);
-		gyo[2] += (int16_t)__rev16(*(uint16_t *)&d[j+13]);
+                gyo[0] += (int16_t)__rev16(*(uint16_t *)&d[j+9]);
+                gyo[1] += (int16_t)__rev16(*(uint16_t *)&d[j+11]);
+                gyo[2] += (int16_t)__rev16(*(uint16_t *)&d[j+13]);
 
-                 
-	    }
-	}
 
-	divisor = 1.0f / divisor;
+            }
+        }
 
-	mpu6000Data.rawTemp = temp * divisor * (1.0f / 340.0f) + 36.53f;
-	mpu6000Data.temp = utilFilter(&mpu6000Data.tempFilter, mpu6000Data.rawTemp);
+        divisor = 1.0f / divisor;
 
-	mpu6000ScaleAcc(acc, mpu6000Data.rawAcc, divisor);
-	mpu6000CalibAcc(mpu6000Data.rawAcc, mpu6000Data.acc);
+        mpu6000Data.rawTemp = temp * divisor * (1.0f / 340.0f) + 36.53f;
+        mpu6000Data.temp = utilFilter(&mpu6000Data.tempFilter, mpu6000Data.rawTemp);
 
-	mpu6000ScaleGyo(gyo, mpu6000Data.rawGyo, divisor);
-	mpu6000CalibGyo(mpu6000Data.rawGyo, mpu6000Data.gyo);
+        mpu6000ScaleAcc(acc, mpu6000Data.rawAcc, divisor);
+        for (i=0; i<3; i++)
+        {
+            tmp[i] = LowPassFilterFloat_apply(&mpu6000Data.lpf_acc[i], mpu6000Data.rawAcc[i]);
+        }
+        mpu6000CalibAcc(/*mpu6000Data.rawAcc*/tmp, mpu6000Data.acc);
 
-	mpu6000Data.lastUpdate = timerMicros();
+		
+        mpu6000ScaleGyo(gyo, mpu6000Data.rawGyo, divisor);
+        for (i=0; i<3; i++)
+        {
+            tmp[i] = LowPassFilterFloat_apply(&mpu6000Data.lpf_gyro[i], mpu6000Data.rawGyo[i]);
+        }		
+        mpu6000CalibGyo(/*mpu6000Data.rawGyo*/tmp, mpu6000Data.gyo);
+
+        mpu6000Data.lastUpdate = timerMicros();
     }
 }
 
@@ -267,33 +298,33 @@ void mpu6000PreInit(void) {
 
 void mpu6000Init(void) {
     switch ((int)p[IMU_FLIP]) {
-        case 1:
-            mpu6000Data.accSign[0] =  1.0f;
-            mpu6000Data.accSign[1] = -1.0f;
-            mpu6000Data.accSign[2] = -1.0f;
-            mpu6000Data.gyoSign[0] =  1.0f;
-            mpu6000Data.gyoSign[1] = -1.0f;
-            mpu6000Data.gyoSign[2] = -1.0f;
-            break;
+    case 1:
+        mpu6000Data.accSign[0] =  1.0f;
+        mpu6000Data.accSign[1] = -1.0f;
+        mpu6000Data.accSign[2] = -1.0f;
+        mpu6000Data.gyoSign[0] =  1.0f;
+        mpu6000Data.gyoSign[1] = -1.0f;
+        mpu6000Data.gyoSign[2] = -1.0f;
+        break;
 
-        case 2:
-            mpu6000Data.accSign[0] = -1.0f;
-            mpu6000Data.accSign[1] =  1.0f;
-            mpu6000Data.accSign[2] = -1.0f;
-            mpu6000Data.gyoSign[0] = -1.0f;
-            mpu6000Data.gyoSign[1] =  1.0f;
-            mpu6000Data.gyoSign[2] = -1.0f;
-            break;
+    case 2:
+        mpu6000Data.accSign[0] = -1.0f;
+        mpu6000Data.accSign[1] =  1.0f;
+        mpu6000Data.accSign[2] = -1.0f;
+        mpu6000Data.gyoSign[0] = -1.0f;
+        mpu6000Data.gyoSign[1] =  1.0f;
+        mpu6000Data.gyoSign[2] = -1.0f;
+        break;
 
-        case 0:
-        default:
-            mpu6000Data.accSign[0] = 1.0f;
-            mpu6000Data.accSign[1] = 1.0f;
-            mpu6000Data.accSign[2] = 1.0f;
-            mpu6000Data.gyoSign[0] = 1.0f;
-            mpu6000Data.gyoSign[1] = 1.0f;
-            mpu6000Data.gyoSign[2] = 1.0f;
-            break;
+    case 0:
+    default:
+        mpu6000Data.accSign[0] = 1.0f;
+        mpu6000Data.accSign[1] = 1.0f;
+        mpu6000Data.accSign[2] = 1.0f;
+        mpu6000Data.gyoSign[0] = 1.0f;
+        mpu6000Data.gyoSign[1] = 1.0f;
+        mpu6000Data.gyoSign[2] = 1.0f;
+        break;
     }
 
     utilFilterInit(&mpu6000Data.tempFilter, DIMU_OUTER_DT, DIMU_TEMP_TAU, IMU_ROOM_TEMP);
@@ -310,7 +341,7 @@ void mpu6000Init(void) {
 
     // wait for a valid response
     while (mpu6000GetReg(117) != 0x68)
-	delay(10);
+        delay(10);
 
     // GYO scale
 #if MPU6000_GYO_SCALE == 250

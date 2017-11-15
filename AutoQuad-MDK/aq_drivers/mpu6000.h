@@ -19,8 +19,10 @@
 #ifndef _mpu6000_h
 #define _mpu6000_h
 
+
 #include "spi.h"
 #include "util.h"
+#include "LowPassFilterFloat.h"
 
 #define MPU6000_SPI_REG_BAUD	    SPI_BaudRatePrescaler_64	// initial setup only
 #define MPU6000_SPI_RUN_BAUD	    SPI_BaudRatePrescaler_4	// 10.5 MHz
@@ -66,6 +68,9 @@ typedef struct {
     float gyoSign[3];
     uint8_t readReg;
     uint8_t enabled;
+	LowPassFilterFloat lpf_acc[3];
+	LowPassFilterFloat lpf_gyro[3];	
+	LowPassFilterFloat lpf_dRateGyo[3];		
 } mpu6000Struct_t;
 
 extern mpu6000Struct_t mpu6000Data;
