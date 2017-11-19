@@ -272,7 +272,7 @@ static void ubloxVersionSpecific(int ver) {
         ubloxSetSBAS(0);                                        // disable SBAS
     }
     else {
-        // 5Hz
+        // 5Hz=200
         ubloxSetRate((uint16_t)100);//ubloxSetRate((uint16_t)200); 
     }
 }
