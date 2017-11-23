@@ -139,7 +139,7 @@ void gpsInit(void) {
     AQ_NOTICE("GPS init\n");
 	
     //memset((void *)&gpsData, 0, sizeof(gpsData));
-    //memset((void *)&gpsTaskData, 0, sizeof(gpsData));
+    //memset((void *)&gpsTaskData, 0, sizeof(gpsTaskData));
 
     gpsTaskData.ubloxEnabled = true;
     gpsTaskData.baudCycle[0] = 9600;
