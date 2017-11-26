@@ -138,6 +138,7 @@ void gpsTpHandler() {
 void gpsInit(void) {
     AQ_NOTICE("GPS init\n");
 	
+    //TODO 
     //memset((void *)&gpsData, 0, sizeof(gpsData));
     //memset((void *)&gpsTaskData, 0, sizeof(gpsTaskData));
 
