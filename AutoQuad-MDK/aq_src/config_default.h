@@ -276,8 +276,8 @@
 
 #define DEFAULT_IMU_FLIP            0                   // flip DIMU: 0 == none, 1 == around roll axis (left becomes right), 2 == around pitch axis (front becomes back)
 #define DEFAULT_IMU_ROT		        +0.0		// degrees to rotate the IMU to align with the frame (applied after FLIP)
-#define DEFAULT_IMU_MAG_INCL	    40.0f//-33.0//原来意义失效 用作gyro滤波系数
-#define DEFAULT_IMU_MAG_DECL	    20.0f//0.0  //原来意义失效 用作acc滤波系数
+#define DEFAULT_IMU_MAG_INCL	    -33.0
+#define DEFAULT_IMU_MAG_DECL	    0.0  
 #define DEFAULT_IMU_PRESS_SENSE	    0.0f		// 0 == sensor #1, 1 == sensor #2, 2 == both
 
 

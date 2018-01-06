@@ -113,7 +113,9 @@ void runTaskCode(void *unused) {
 
         if (!((loops+1) % 20)) {
             simDoAccUpdate(runData.sumAcc[0]*(1.0f / (float)RUN_SENSOR_HIST), runData.sumAcc[1]*(1.0f / (float)RUN_SENSOR_HIST), runData.sumAcc[2]*(1.0f / (float)RUN_SENSOR_HIST));
-        }
+            //acc has do 25hz lpf in driver
+			//simDoAccUpdate(IMU_ACCX, IMU_ACCY, IMU_ACCZ);
+		}
         else if (!((loops+7) % 20)) {
             simDoPresUpdate(runData.sumPres*(1.0f / (float)RUN_SENSOR_HIST));
         }

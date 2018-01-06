@@ -54,18 +54,18 @@ void mpu6600InitialBias(void) {
     mpu6000Data.temp = tempSum / 50.0f;
     utilFilterReset(&mpu6000Data.tempFilter, mpu6000Data.temp);
 
-    for (i=0; i<3; i++)
-    {
-        //使用p[IMU_MAG_INCL]做为gyro滤波系数 默认40hz
-        LowPassFilterFloat_init(&mpu6000Data.lpf_dRateGyo[i], DIMU_INNER_HZ, p[IMU_MAG_INCL]);
-    }
+//    for (i=0; i<3; i++)
+//    {
+//        //gyro滤波系数 默认25hz
+//        LowPassFilterFloat_init(&mpu6000Data.lpf_dRateGyo[i], DIMU_INNER_HZ, 25.0f);
+//    }
 
-    for (i=0; i<3; i++)
-    {
-        //使用p[IMU_MAG_DECL]做为acc滤波系数 默认20hz
-        LowPassFilterFloat_init(&mpu6000Data.lpf_acc[i],  DIMU_OUTER_HZ, p[IMU_MAG_DECL]);
-        LowPassFilterFloat_init(&mpu6000Data.lpf_gyro[i], DIMU_OUTER_HZ, p[IMU_MAG_DECL]);
-    }
+//    for (i=0; i<3; i++)
+//    {
+//        //acc滤波系数 默认25hz
+//        LowPassFilterFloat_init(&mpu6000Data.lpf_acc[i],  DIMU_OUTER_HZ, 25.0f);
+//        LowPassFilterFloat_init(&mpu6000Data.lpf_gyro[i], DIMU_OUTER_HZ, 25.0f);
+//    }
 }
 
 static void mpu6000CalibAcc(float *in, volatile float *out) {
@@ -175,12 +175,7 @@ void mpu6000DrateDecode(void) {
         divisor = 1.0f / divisor;
 
         mpu6000ScaleGyo(gyo, mpu6000Data.dRateRawGyo, divisor);
-
-        for (i=0; i<3; i++)
-        {
-            tmp[i] = LowPassFilterFloat_apply(&mpu6000Data.lpf_dRateGyo[i], mpu6000Data.dRateRawGyo[i]);
-        }
-        mpu6000CalibGyo(/*mpu6000Data.dRateRawGyo*/tmp, mpu6000Data.dRateGyo);
+        mpu6000CalibGyo(mpu6000Data.dRateRawGyo, mpu6000Data.dRateGyo);
     }
 }
 
@@ -231,15 +226,11 @@ void mpu6000Decode(void) {
         {
             tmp[i] = LowPassFilterFloat_apply(&mpu6000Data.lpf_acc[i], mpu6000Data.rawAcc[i]);
         }
-        mpu6000CalibAcc(/*mpu6000Data.rawAcc*/tmp, mpu6000Data.acc);
+        mpu6000CalibAcc(mpu6000Data.rawAcc, mpu6000Data.acc);
 
 		
-        mpu6000ScaleGyo(gyo, mpu6000Data.rawGyo, divisor);
-        for (i=0; i<3; i++)
-        {
-            tmp[i] = LowPassFilterFloat_apply(&mpu6000Data.lpf_gyro[i], mpu6000Data.rawGyo[i]);
-        }		
-        mpu6000CalibGyo(/*mpu6000Data.rawGyo*/tmp, mpu6000Data.gyo);
+        mpu6000ScaleGyo(gyo, mpu6000Data.rawGyo, divisor);	
+        mpu6000CalibGyo(mpu6000Data.rawGyo, mpu6000Data.gyo);
 
         mpu6000Data.lastUpdate = timerMicros();
     }

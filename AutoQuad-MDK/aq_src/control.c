@@ -45,13 +45,24 @@
 #ifndef __CC_ARM
 #include <intrinsics.h>
 #endif
+#include "fuzzyPID.h"
 
 controlStruct_t controlData __attribute__((section(".ccm")));
+
+FUZZY_PID rate_fuzzy_pid[2] __attribute__((section(".ccm")));
+
+#define C_ETHR  0.35f   //误差阈值
+#define C_ECTHR 0.004f    //误差变化量阈值
+
+#define C_KPTHR 10.0f   //KP变化量阈值
+#define C_KITHR 0.01f
+#define C_KDTHR 5.0f
+
 
 rt_uint32_t *controlTaskStack;
 static struct rt_thread controlTask;
 
-void controlSetMode() {
+void controlSetMode(void) {
     // Set and announce input control mode
 
     // user control
@@ -590,7 +601,22 @@ void controlTaskCode(void *unused) {
                             {
                                 // get rate from angle
                                 outputs[axis] = pidUpdate(controlData.ratePID[axis], outputs[axis], ratesActual[axis]);
-
+								
+								//串级pid使用模糊pid
+								if (axis<RPY_Y)
+								{	
+									//更新p i d
+								    rate_fuzzy_pid[axis].kp += FUZZY_Calc_detKp(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kpthr);  //计算detKp
+                                    rate_fuzzy_pid[axis].ki += FUZZY_Calc_detKi(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kithr);  //计算detKi
+                                    rate_fuzzy_pid[axis].kd += FUZZY_Calc_detKp(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kdthr);  //计算detKd								
+								    
+									//使用新的pid
+									controlData.ratePID[axis]->p = rate_fuzzy_pid[axis].kp;
+									controlData.ratePID[axis]->i = rate_fuzzy_pid[axis].ki;
+									controlData.ratePID[axis]->d = rate_fuzzy_pid[axis].kd;
+								
+								}
+								
                             }
                             else
                             {
@@ -706,7 +732,32 @@ void controlInit(void) {
         // yaw is always in rate mode, this assignment just simplifies code the taskCode processing loops
         controlData.rateModePID[RPY_Y] = controlData.ratePID[RPY_Y];
     }
+    
+	//roll pitch 角度度控制使用fuzzy pid
+	for (int i = 0; i < 2; ++i)
+	{
+	   rate_fuzzy_pid[i].ethr = C_ETHR;//误差阈值
+	   rate_fuzzy_pid[i].ecthr = C_ECTHR;//误差变化了阈值
+	   rate_fuzzy_pid[i].kpthr = C_KPTHR;//kp变化了阈值
+	   rate_fuzzy_pid[i].kithr = C_KITHR;//kp变化了阈值
+	   rate_fuzzy_pid[i].kdthr = C_KDTHR;//kp变化了阈值
 
+	   rate_fuzzy_pid[i].kp = controlData.ratePID[i]->p;
+	   rate_fuzzy_pid[i].ki = controlData.ratePID[i]->i;
+	   rate_fuzzy_pid[i].kd	= controlData.ratePID[i]->d;
+	}	
+	//yaw 控制不使用模糊pid
+//    rate_fuzzy_pid[2].ethr
+//    rate_fuzzy_pid[2].ecthr
+//    rate_fuzzy_pid[2].kpthr
+//    rate_fuzzy_pid[2].kithr
+//    rate_fuzzy_pid[2].kdthr
+
+//    rate_fuzzy_pid[2].kp
+//    rate_fuzzy_pid[2].ki
+//    rate_fuzzy_pid[2].kd	
+
+	
     controlTaskStack = aqStackInit(CONTROL_STACK_SIZE, "CONTROL");
 
    

@@ -15,6 +15,8 @@
 
     Copyright © 2011-2014  Bill Nesbitt
     Copyright 2016 Maxim Paperno
+	
+	ÐÞ¸Ä£º2018.1.6 jiezhi320  
 */
 
 #include "pid.h"
@@ -30,15 +32,19 @@ pidStruct_t *pidInit(int pParam, int iParam, int dParam, int fParam, int pMaxPar
     pidStruct_t *pid;
 
     pid = (pidStruct_t *)aqDataCalloc(1, sizeof(pidStruct_t));
-
-    pid->pParam = pParam;
-    pid->iParam = iParam;
-    pid->dParam = dParam;
-    pid->fParam = fParam;
-    pid->pMaxParam = pMaxParam;
-    pid->iMaxParam = iMaxParam;
-    pid->dMaxParam = dMaxParam;
-    pid->oMaxParam = oMaxParam;
+	
+    pid->p = configGetParamValue(pParam);
+    pid->i = configGetParamValue(iParam);
+    pid->d = configGetParamValue(dParam);
+    pid->f = configGetParamValue(fParam);
+    pid->pMax = configGetParamValue(pMaxParam);	
+	pid->iMax = configGetParamValue(iMaxParam);
+    pid->dMax = configGetParamValue(dMaxParam);		
+    pid->oMax = configGetParamValue(oMaxParam);
+	
+	pid->error_last = 0.0f;
+	pid->error_sum = 0.0f;
+	pid->error_delta = 0.0f;
 
     return pid;
 }
@@ -108,36 +114,39 @@ float pidUpdate(pidStruct_t *pid, float setpoint, float position) {
     float v, f, vMax, oMax;
 
     error = setpoint - position;
-
+	
+	pid->error_sum += error;	
+    pid->error_delta = 	error - pid->error_last;
+	
     // calculate the proportional term
-    vMax = configGetParamValue(pid->pMaxParam);
-    pid->pTerm_1 = constrainFloat(configGetParamValue(pid->pParam) * error, -vMax, vMax);
+    vMax = pid->pMax;
+    pid->pTerm_1 = constrainFloat(pid->p * error, -vMax, vMax);//KP
 
     // set output maximum to param value or pMax.
-    oMax = pid->oMaxParam ? configGetParamValue(pid->oMaxParam) : vMax;
+    oMax = pid->oMax ? pid->oMax : vMax;
 
     // calculate the integral state with appropriate limiting
-    if (pid->iParam) {
-	v = configGetParamValue(pid->iParam);
-	vMax = configGetParamValue(pid->iMaxParam);
-	pid->iState += error;
+    if (pid->i) {
+	v = pid->i;
+	vMax = pid->iMax;
+	pid->iState += error;//error sum
 	pid->iTerm_1 = v * pid->iState;
 	if (fabsf(pid->iTerm_1) > vMax) {
 	    pid->iTerm_1 = constrainFloat(pid->iTerm_1, -vMax, vMax);
 	    pid->iState = pid->iTerm_1 / v;
 	}
     } else
-	pid->iTerm_1 = 0.0f;
-
+	pid->iTerm_1 = 0.0f;                                      //KI
+	
     // derivative
-    if (pid->dParam) {
-	v = configGetParamValue(pid->dParam);
-	vMax = configGetParamValue(pid->dMaxParam);
-	f = pid->fParam ? configGetParamValue(pid->fParam) : 1.0f;
+    if (pid->d) {
+	v = pid->d;
+	vMax = pid->dMax;
+	f = pid->f ? pid->f : 1.0f;
 	// uncomment this line if you want the D term to ignore set point changes
 	error = -position;
 
-	pid->dTerm_1 = constrainFloat((v * f) * (error - pid->dState), -vMax, vMax);
+	pid->dTerm_1 = constrainFloat((v * f) * (error - pid->dState), -vMax, vMax);  //KD
 	pid->dState += f * (error - pid->dState);
     }
     else
@@ -366,7 +375,7 @@ float pidUpdateC(pidStruct_t *pid, float setpoint, float position) {
 */
 
 void pidZeroIntegral(pidStruct_t *pid, float pv, float iState) {
-    float i = pid->iParam ? configGetParamValue(pid->iParam) : 0.0f;
+    float i = pid->i ? pid->i : 0.0f;
     if (i != 0.0f)
 	pid->iState = iState / i;
     pid->dState = -pv;

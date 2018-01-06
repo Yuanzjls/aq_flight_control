@@ -26,17 +26,19 @@ typedef struct {
     float setPoint;		// Last setpoint
     float dState;		// Last position input
     float iState;		// Integrator state
-    int iParam;		// integral gain
-    int pParam;		// proportional gain
-    int dParam;		// derivative gain
-    int fParam;		// low pass filter factor (1 - pole) for derivative gain
-    int pMaxParam, iMaxParam, dMaxParam, oMaxParam;
+    float p;		// proportional gain
+    float i;		// integral gain
+    float d;		// derivative gain
+    float f;		// low pass filter factor (1 - pole) for derivative gain
+    float pMax, iMax, dMax, oMax, vMax;
     float pv_1, pv_2;
     float co_1;
     float pTerm_1;
     float iTerm_1;
     float dTerm_1;
     float sp_1;
+	
+	float error_last,error_sum, error_delta;//fuzzypidº∆À„ π”√
 } pidStruct_t;
 
 extern pidStruct_t *pidInit(int pParam, int iParam, int dParam, int fParam, int pMaxParam, int iMaxParam, int dMaxParam, int oMaxParam);

@@ -755,6 +755,11 @@
               <FileType>1</FileType>
               <FilePath>.\aq_src\LowPassFilterFloat.c</FilePath>
             </File>
+            <File>
+              <FileName>fuzzyPID.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\aq_src\fuzzyPID.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
