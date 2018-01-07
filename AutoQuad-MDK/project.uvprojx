@@ -273,8 +273,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x8020000</StartAddress>
+                <Size>0x60000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -336,7 +336,7 @@
               <MiscControls>--gnu --c99</MiscControls>
               <Define>__FPU_PRESENT = 1,__FPU_USED = 1,USE_STDPERIPH_DRIVER,STM32F40_41xxx,ARM_MATH_CM4,__CC_ARM,BOARD_VERSION=8,BOARD_REVISION=6</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;aq_can;.;aq_disk;.;aq_drivers;.;aq_hilsim\include;aq_math;.;aq_mavlink\include\autoquad;aq_mavlink\include;aq_mavlink\include\common;aq_mavlink;aq_radio;.;aq_src;.;aq_targets;.;aq_usb;drivers;dspLib;Libraries\STM32F4xx_StdPeriph_Driver\inc;Libraries\CMSIS\ST\STM32F4xx\Include;Libraries\CMSIS\Include;rt-thread-2.1.0\include;rt-thread-2.1.0\libcpu\arm\cortex-m4;rt-thread-2.1.0\libcpu\arm\common;rt-thread-2.1.0\components\drivers\include;rt-thread-2.1.0\components\drivers\include;rt-thread-2.1.0\components\drivers\include;.\ctrl_libraries\Filter</IncludePath>
+              <IncludePath>applications;.;aq_can;.;aq_disk;.;aq_drivers;.;aq_hilsim\include;aq_math;.;aq_mavlink\include\autoquad;aq_mavlink\include;aq_mavlink\include\common;aq_mavlink;aq_radio;.;aq_src;.;aq_targets;.;aq_usb;drivers;dspLib;Libraries\STM32F4xx_StdPeriph_Driver\inc;Libraries\CMSIS\ST\STM32F4xx\Include;Libraries\CMSIS\Include;rt-thread-2.1.0\include;rt-thread-2.1.0\libcpu\arm\cortex-m4;rt-thread-2.1.0\libcpu\arm\common;rt-thread-2.1.0\components\drivers\include;rt-thread-2.1.0\components\drivers\include;rt-thread-2.1.0\components\drivers\include;.\ctrl_libraries\Filter;.\easyflash\inc;.\easyflash\plugins\types;.\easyflash\plugins</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -394,6 +394,11 @@
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_easyflash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\app_easyflash.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1184,6 +1189,46 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>rt-thread-2.1.0\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>easyflash</GroupName>
+          <Files>
+            <File>
+              <FileName>easyflash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\src\easyflash.c</FilePath>
+            </File>
+            <File>
+              <FileName>ef_env.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\src\ef_env.c</FilePath>
+            </File>
+            <File>
+              <FileName>ef_env_wl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\src\ef_env_wl.c</FilePath>
+            </File>
+            <File>
+              <FileName>ef_iap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\src\ef_iap.c</FilePath>
+            </File>
+            <File>
+              <FileName>ef_log.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\src\ef_log.c</FilePath>
+            </File>
+            <File>
+              <FileName>ef_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\src\ef_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>ef_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\easyflash\port\ef_port.c</FilePath>
             </File>
           </Files>
         </Group>

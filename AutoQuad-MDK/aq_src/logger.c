@@ -40,6 +40,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "fuzzyPID.h"
 extern float a,b,c;
 
 extern float deltaPitch,chPitchPer;
@@ -328,22 +329,22 @@ void loggerSetup(void) {
 		break;
 #endif
 	    case LOG_IMU_RATEX:
-		loggerData.fp[i].fieldPointer = (void *)&IMU_RATEX;
+		loggerData.fp[i].fieldPointer = (void *)&rate_fuzzy_pid[0].kp;//IMU_RATEX;
 		break;
 	    case LOG_IMU_RATEY:
-		loggerData.fp[i].fieldPointer = (void *)&IMU_RATEY;
+		loggerData.fp[i].fieldPointer = (void *)&rate_fuzzy_pid[0].ki;//IMU_RATEY;
 		break;
 	    case LOG_IMU_RATEZ:
-		loggerData.fp[i].fieldPointer = (void *)&IMU_RATEZ;
+		loggerData.fp[i].fieldPointer = (void *)&rate_fuzzy_pid[0].kd;//IMU_RATEZ;
 		break;
 	    case LOG_IMU_ACCX:
-		loggerData.fp[i].fieldPointer = (void *)&IMU_ACCX;
+		loggerData.fp[i].fieldPointer = (void *)&rate_fuzzy_pid[1].kp;//IMU_ACCX;
 		break;
 	    case LOG_IMU_ACCY:
-		loggerData.fp[i].fieldPointer = (void *)&IMU_ACCY;
+		loggerData.fp[i].fieldPointer = (void *)&rate_fuzzy_pid[1].ki;//IMU_ACCY;
 		break;
 	    case LOG_IMU_ACCZ:
-		loggerData.fp[i].fieldPointer = (void *)&IMU_ACCZ;
+		loggerData.fp[i].fieldPointer = (void *)&rate_fuzzy_pid[1].kd;//IMU_ACCZ;
 		break;
 	    case LOG_IMU_MAGX:
 		loggerData.fp[i].fieldPointer = (void *)&IMU_MAGX;

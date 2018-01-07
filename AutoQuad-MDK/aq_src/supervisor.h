@@ -29,6 +29,7 @@
 
 #define SUPERVISOR_RATE		    20		    // Hz
 #define SUPERVISOR_DISARM_TIME	    (1e6*1)	    // 2 seconds delay for arm/disarm stick commands  
+#define SUPERVISOR_RESET_TIME	    (1e6*5)     // 5 √Î÷ÿ∆ÙΩ¯»Îboot
 #define SUPERVISOR_STICK_CMD_TIME   (1e6*2)	    // 2 seconds delay for other stick commands
 #define SUPERVISOR_RADIO_LOSS1	    ((uint32_t)(p[SPVR_FS_RAD_TO1] * 1e6f))	    // seconds to micros
 #define SUPERVISOR_RADIO_LOSS2	    ((uint32_t)(p[SPVR_FS_RAD_TO2] * 1e6f))	    // seconds to micros
@@ -116,6 +117,7 @@ typedef struct {
     float aOutLPF;
 
     uint32_t armTime;
+    uint32_t bootTime;	
     uint32_t stickCmdTimer;
     uint32_t lastGoodRadioMicros;
     uint32_t systemStatus;          // supervisorSystemStatusBits

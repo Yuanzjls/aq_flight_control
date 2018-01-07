@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <rtthread.h>
+#include "app_easyflash.h"
 
 supervisorStruct_t supervisorData __attribute__((section(".ccm")));
 static struct rt_thread supervisorTask;
@@ -482,6 +483,25 @@ void supervisorTaskCode(void *unused) {
             else {
                 supervisorData.armTime = 0;
             }
+			
+			//判断是否进入重启 摇杆外八字保持5秒
+            if (RADIO_VALID && RADIO_THROT < 10 && RADIO_RUDD < -500 && RADIO_PITCH > +500 && RADIO_ROLL > +500)
+			{
+                if (!supervisorData.bootTime) {
+                    supervisorData.bootTime = timerMicros();
+                }
+                else if ((timerMicros() - supervisorData.bootTime) > SUPERVISOR_RESET_TIME) {
+                    //重启进入boot升级
+					supervisorData.bootTime = 0;
+			        set_env_by_name("start_iap",1);//
+			        NVIC_SystemReset();
+			        while(1);
+                    
+                }
+            }
+            else {
+                supervisorData.bootTime = 0;
+            }			
 
             // various functions while disarmed
             if (RADIO_VALID && RADIO_THROT < p[CTRL_MIN_THROT] && RADIO_RUDD < -500) {

@@ -50,6 +50,8 @@
 #include "telem_sPort.h"
 #endif
 #include <cpuusage.h>
+#include "app_easyflash.h"
+#include "easyflash.h"
 
 volatile unsigned long counter;
 volatile unsigned long minCycles = 0xFFFFFFFF;
@@ -177,7 +179,13 @@ void rt_init_thread_entry(void* parameter)
     commNoticesInit();  // set up notice queue
     sdioLowLevelInit();
     filerInit();
+	
+	easyflash_init();	
     configInit();
+	
+	//获取comm1 bitrate并保存 用于boot 初始化串口com1
+	set_env_by_name("comm1_bitrate", p[COMM_BAUD1]);
+	
     signalingInit();
     supervisorInit();
     commInit();

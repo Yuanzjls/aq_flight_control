@@ -38,10 +38,10 @@ void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
     /* Set the Vector Table base location at 0x20000000 */
-    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+//    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
 #else  /* VECT_TAB_FLASH  */
     /* Set the Vector Table base location at 0x08000000 */
-    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+//    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -120,5 +120,16 @@ void rt_hw_board_init()
 #endif
 	
 }
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+
+void reboot(void)
+{
+    NVIC_SystemReset();
+}
+
+FINSH_FUNCTION_EXPORT(reboot, reset the system);
+#endif
 
 /*@}*/

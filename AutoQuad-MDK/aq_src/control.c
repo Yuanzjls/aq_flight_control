@@ -608,12 +608,12 @@ void controlTaskCode(void *unused) {
 									//更新p i d
 								    rate_fuzzy_pid[axis].kp += FUZZY_Calc_detKp(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kpthr);  //计算detKp
                                     rate_fuzzy_pid[axis].ki += FUZZY_Calc_detKi(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kithr);  //计算detKi
-                                    rate_fuzzy_pid[axis].kd += FUZZY_Calc_detKp(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kdthr);  //计算detKd								
+                                    rate_fuzzy_pid[axis].kd += FUZZY_Calc_detKd(controlData.ratePID[axis]->error_sum, controlData.ratePID[axis]->error_delta, rate_fuzzy_pid[axis].ethr, rate_fuzzy_pid[axis].ecthr, rate_fuzzy_pid[axis].kdthr);  //计算detKd								
 								    
 									//使用新的pid
-									controlData.ratePID[axis]->p = rate_fuzzy_pid[axis].kp;
-									controlData.ratePID[axis]->i = rate_fuzzy_pid[axis].ki;
-									controlData.ratePID[axis]->d = rate_fuzzy_pid[axis].kd;
+									//controlData.ratePID[axis]->p = rate_fuzzy_pid[axis].kp;
+									//controlData.ratePID[axis]->i = rate_fuzzy_pid[axis].ki;
+									//controlData.ratePID[axis]->d = rate_fuzzy_pid[axis].kd;
 								
 								}
 								
